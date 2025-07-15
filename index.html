@@ -1,85 +1,153 @@
 <!DOCTYPE html>
 <html lang="fa">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>سایت نویسندگی</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: linear-gradient(to right, #ff0000, #0000ff);
-            color: white;
-            text-align: center;
-        }
-        header {
-            background-color: rgba(0, 0, 0, 0.5);
-            padding: 10px;
-        }
-        nav {
-            margin: 20px 0;
-        }
-        .section {
-            margin-top: 30px;
-            padding: 20px;
-            background-color: rgba(0, 0, 0, 0.7);
-            border-radius: 8px;
-        }
-        .footer {
-            margin-top: 50px;
-            padding: 10px;
-            background-color: rgba(0, 0, 0, 0.5);
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>سایت نویسندگی</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to right, #ff0000, #0000ff);
+      color: white;
+      text-align: center;
+    }
+    header {
+      background-color: rgba(0, 0, 0, 0.5);
+      padding: 10px;
+    }
+    nav {
+      margin: 20px 0;
+    }
+    .section {
+      margin-top: 30px;
+      padding: 20px;
+      background-color: rgba(0, 0, 0, 0.7);
+      border-radius: 8px;
+    }
+    .footer {
+      margin-top: 50px;
+      padding: 10px;
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    /* پاپ‌آپ‌ها */
+    .popup-overlay {
+      position: fixed;
+      top: 0;
+      right: 0;
+      left: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.6);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+    }
+
+    .popup-box {
+      background: #222;
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 400px;
+      text-align: right;
+      position: relative;
+      color: white;
+    }
+
+    .popup-box h3 {
+      margin-top: 0;
+    }
+
+    .popup-close {
+      position: absolute;
+      top: 8px;
+      left: 10px;
+      font-size: 18px;
+      cursor: pointer;
+      color: #fff;
+    }
+
+    a.open-btn {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 8px 16px;
+      background-color: #ff8800;
+      border-radius: 5px;
+      color: white;
+      text-decoration: none;
+    }
+  </style>
 </head>
 <body>
 
-    <header>
-        <h1>خوش آمدید به سایت نویسندگی</h1>
-        <p>این سایت مکانی برای انتشار داستان‌ها و نظرات شماست</p>
-    </header>
+  <header>
+    <h1>خوش آمدید به سایت نویسندگی</h1>
+    <p>این سایت مکانی برای انتشار داستان‌ها و نظرات شماست</p>
+  </header>
 
-    <nav>
-        <a href="#admins" style="color: white;">ادمین‌ها</a> |
-        <a href="#villains" style="color: white;">ویلن‌ها</a> |
-        <a href="#heroes" style="color: white;">قهرمان‌ها</a> |
-        <a href="#neutral" style="color: white;">خنثی‌ها</a> |
-        <a href="#about" style="color: white;">درباره ما</a> |
-        <a href="#contact" style="color: white;">تماس با ما</a>
-    </nav>
+  <nav>
+    <a href="#admins" style="color: white;">ادمین‌ها</a> |
+    <a href="#villains" style="color: white;">ویلن‌ها</a> |
+    <a href="#heroes" style="color: white;">قهرمان‌ها</a> |
+    <a href="#neutral" style="color: white;">خنثی‌ها</a> |
+    <a href="#about" style="color: white;">درباره ما</a> |
+    <a href="#contact" style="color: white;">تماس با ما</a>
+  </nav>
 
-    <div class="section" id="admins">
-        <h2>ادمین‌ها</h2>
-        <p>اینجا می‌توانید اطلاعات ادمین‌های سایت رو قرار بدید.</p>
+  <div class="section" id="admins">
+    <h2>ادمین‌ها</h2>
+    <a href="#" class="open-btn" onclick="openPopup('ادمین‌ها', 'در این بخش، اطلاعات ادمین‌های سایت را مشاهده می‌کنید. مانند نویسنده اصلی، طراح، و مدیریت.')">مشاهده اطلاعات</a>
+  </div>
+
+  <div class="section" id="villains">
+    <h2>ویلن‌ها</h2>
+    <a href="#" class="open-btn" onclick="openPopup('ویلن‌ها', 'اینجا اطلاعات شخصیت‌های منفی (ویلن‌ها) قرار می‌گیرد. آن‌ها دشمنان اصلی قهرمانان هستند.')">مشاهده اطلاعات</a>
+  </div>
+
+  <div class="section" id="heroes">
+    <h2>قهرمان‌ها</h2>
+    <a href="#" class="open-btn" onclick="openPopup('قهرمان‌ها', 'اینجا بیوگرافی قهرمانان داستان‌ها قرار می‌گیرد. هر کدام با قدرت‌ها و داستان‌های منحصربه‌فرد.')">مشاهده اطلاعات</a>
+  </div>
+
+  <div class="section" id="neutral">
+    <h2>خنثی‌ها</h2>
+    <a href="#" class="open-btn" onclick="openPopup('خنثی‌ها', 'شخصیت‌هایی که نه به طور کامل قهرمان‌اند و نه ویلن؛ بلکه نقش کلیدی در داستان دارند.')">مشاهده اطلاعات</a>
+  </div>
+
+  <div class="section" id="about">
+    <h2>درباره ما</h2>
+    <p>اینجا می‌توانید اطلاعاتی درباره تیم و هدف سایت را بنویسید.</p>
+  </div>
+
+  <div class="section" id="contact">
+    <h2>تماس با ما</h2>
+    <p>شماره تلفن: 09134909607</p>
+  </div>
+
+  <div class="footer">
+    <p>&copy; 2025 سایت نویسندگی | تمام حقوق محفوظ است.</p>
+  </div>
+
+  <!-- پاپ‌آپ -->
+  <div class="popup-overlay" id="popup">
+    <div class="popup-box">
+      <span class="popup-close" onclick="closePopup()">×</span>
+      <h3 id="popup-title">عنوان پاپ‌آپ</h3>
+      <p id="popup-content">متن پاپ‌آپ در اینجا قرار می‌گیرد.</p>
     </div>
+  </div>
 
-    <div class="section" id="villains">
-        <h2>ویلن‌ها</h2>
-        <p>داستان‌های مربوط به ویلَن‌ها اینجا قرار می‌گیرند.</p>
-    </div>
+  <script>
+    function openPopup(title, content) {
+      document.getElementById('popup-title').innerText = title;
+      document.getElementById('popup-content').innerText = content;
+      document.getElementById('popup').style.display = 'flex';
+    }
 
-    <div class="section" id="heroes">
-        <h2>قهرمان‌ها</h2>
-        <p>داستان‌های قهرمانان اینجا نمایش داده می‌شود.</p>
-    </div>
-
-    <div class="section" id="neutral">
-        <h2>خنثی‌ها</h2>
-        <p>داستان‌های خنثی اینجا قرار خواهند گرفت.</p>
-    </div>
-
-    <div class="section" id="about">
-        <h2>درباره ما</h2>
-        <p>اینجا می‌توانید اطلاعاتی درباره تیم و هدف سایت را بنویسید.</p>
-    </div>
-
-    <div class="section" id="contact">
-        <h2>تماس با ما</h2>
-        <p>شماره تلفن: 09134909607</p>
-    </div>
-
-    <div class="footer">
-        <p>&copy; 2025 سایت نویسندگی | تمام حقوق محفوظ است.</p>
-    </div>
+    function closePopup() {
+      document.getElementById('popup').style.display = 'none';
+    }
+  </script>
 
 </body>
 </html>
