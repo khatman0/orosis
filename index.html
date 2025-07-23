@@ -7,9 +7,11 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: linear-gradient(to right, #ff0000, #0000ff);
+      background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
       color: white;
       text-align: center;
+      margin: 0;
+      padding: 0;
     }
 
     header {
@@ -19,6 +21,15 @@
 
     nav {
       margin: 20px 0;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
     }
 
     .section {
@@ -26,6 +37,8 @@
       padding: 20px;
       background-color: rgba(0, 0, 0, 0.7);
       border-radius: 8px;
+      margin-left: 20px;
+      margin-right: 20px;
     }
 
     .footer {
@@ -54,12 +67,14 @@
       padding: 20px;
       border-radius: 10px;
       max-width: 600px;
+      width: 100%;
       max-height: 90vh;
       text-align: right;
       position: relative;
       color: white;
       overflow-y: auto;
       direction: rtl;
+      box-sizing: border-box;
     }
 
     .popup-box h3 {
@@ -95,13 +110,13 @@
   </header>
 
   <nav>
-    <a href="#admins" style="color: white;">ادمین‌ها</a> |
-    <a href="#villains" style="color: white;">ویلن‌ها</a> |
-    <a href="#heroes" style="color: white;">قهرمان‌ها</a> |
-    <a href="#neutral" style="color: white;">خنثی‌ها</a> |
-    <a href="#story" style="color: white;">داستان‌ها</a> |
-    <a href="#about" style="color: white;">درباره ما</a> |
-    <a href="#contact" style="color: white;">تماس با ما</a>
+    <a href="#admins">ادمین‌ها</a> |
+    <a href="#villains">ویلن‌ها</a> |
+    <a href="#heroes">قهرمان‌ها</a> |
+    <a href="#neutral">خنثی‌ها</a> |
+    <a href="#story">داستان‌ها</a> |
+    <a href="#about">درباره ما</a> |
+    <a href="#contact">تماس با ما</a>
   </nav>
 
   <div class="section" id="admins">
@@ -111,12 +126,12 @@
 
   <div class="section" id="villains">
     <h2>ویلن‌ها</h2>
-    <a href="#" class="open-btn" onclick="openPopup('لاکیفر ، مورتان آرکید ، ارتش مارتون abcd ، تراداموش ، آرتون کارتز ، ندور ')">مشاهده اطلاعات</a>
+    <a href="#" class="open-btn" onclick="openPopup('ویلن‌ها', 'لاکیفر ، مورتان آرکید ، تراداموش ، آنتون کارتز ، ندور')">مشاهده اطلاعات</a>
   </div>
 
   <div class="section" id="heroes">
     <h2>قهرمان‌ها</h2>
-    <a href="#" class="open-btn" onclick="openPopup('آرتون ، الکسیس مارکوس ، زتا ، تریون ، ریونجر ، دکتر المنت ، زتانور')">مشاهده اطلاعات</a>
+    <a href="#" class="open-btn" onclick="openPopup('قهرمان‌ها', 'ارتش ماراتون ، آرتون ، الکسیس مارکوس ، زتا ، تریون ، ریونجر ، دکتر المنت ، زتانور')">مشاهده اطلاعات</a>
   </div>
 
   <div class="section" id="neutral">
@@ -155,13 +170,19 @@
   <script>
     function openPopup(title, content) {
       document.getElementById('popup-title').innerText = title;
-      document.getElementById('popup-content').innerHTML = content.replaceAll('\n', '<br>');
+      document.getElementById('popup-content').innerHTML = content.split('\n').join('<br>');
       document.getElementById('popup').style.display = 'flex';
     }
 
     function closePopup() {
       document.getElementById('popup').style.display = 'none';
     }
+
+    document.addEventListener('keydown', function(event) {
+      if (event.key === "Escape") {
+        closePopup();
+      }
+    });
 
     const storyText = `فصل ۱: آن شب تاریک
 
@@ -341,10 +362,6 @@
 فصل ۲۶: نبردهای جهان‌های موازی
 
 تریون و کایروس در جهان‌های موازی به مبارزه پرداختند؛ نبردهایی که هر کدام تهدیدی برای سرنوشت کل کیهان بودند.
-
-
----
-
 `;
   </script>
 
