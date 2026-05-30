@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>خط زمانی — اوروسیس</title>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100;300;400;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #020408;
+    --surface: #070d14;
+    --surface2: #0c1824;
+    --accent: #00c8ff;
+    --accent-warm: #ff6b35;
+    --accent-gold: #ffd166;
+    --accent-green: #06d6a0;
+    --glow: rgba(0,200,255,0.12);
+    --text: #c8dde8;
+    --muted: #4a6070;
+    --border: rgba(0,200,255,0.12);
+    --font: 'Vazirmatn', sans-serif;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--text); font-family:var(--font); overflow-x:hidden; }
+
+  nav {
+    position:fixed; top:0; left:0; right:0; z-index:100;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:24px 60px;
+    background:rgba(2,4,8,0.92);
+    border-bottom:1px solid var(--border);
+    backdrop-filter:blur(16px);
+  }
+  .logo { font-size:20px; font-weight:900; letter-spacing:6px; color:var(--accent); text-decoration:none; }
+  .nav-links { display:flex; gap:40px; list-style:none; }
+  .nav-links a { color:var(--muted); text-decoration:none; font-size:12px; letter-spacing:2px; transition:color 0.3s; }
+  .nav-links a:hover, .nav-links a.active { color:var(--accent); }
+
+  /* HEADER */
+  .page-header {
+    padding:160px 60px 60px;
+    max-width:1200px; margin:0 auto;
+  }
+  .breadcrumb { font-size:11px; letter-spacing:4px; color:var(--muted); margin-bottom:24px; text-transform:uppercase; }
+  .breadcrumb span { color:var(--accent); }
+  .page-title { font-size:clamp(52px,7vw,90px); font-weight:900; color:#fff; line-height:1; letter-spacing:-2px; }
+  .page-title em { font-style:normal; color:transparent; -webkit-text-stroke:1px rgba(0,200,255,0.5); }
+  .page-desc { font-size:15px; font-weight:300; color:var(--muted); max-width:520px; line-height:2; margin-top:20px; }
+
+  /* ERA SELECTOR */
+  .era-bar {
+    max-width:1200px; margin:0 auto;
+    padding:0 60px 60px;
+    display:flex; gap:2px;
+  }
+  .era-btn {
+    flex:1;
+    padding:20px;
+    background:var(--surface);
+    border:none;
+    color:var(--muted);
+    font-family:var(--font);
+    font-size:12px;
+    letter-spacing:2px;
+    cursor:pointer;
+    transition:all 0.3s;
+    text-align:center;
+    text-transform:uppercase;
+    border-top:2px solid transparent;
+    position:relative;
+    overflow:hidden;
+  }
+  .era-btn .era-year { display:block; font-size:22px; font-weight:900; color:inherit; margin-bottom:4px; }
+  .era-btn.active, .era-btn:hover { color:#fff; }
+  .era-btn.active { border-top-color:currentColor; }
+  .era-btn.e1 { color:#4a6070; }
+  .era-btn.e1.active, .era-btn.e1:hover { color:var(--accent-green); background:rgba(6,214,160,0.05); border-top-color:var(--accent-green); }
+  .era-btn.e2 { color:#4a6070; }
+  .era-btn.e2.active, .era-btn.e2:hover { color:var(--accent); background:rgba(0,200,255,0.05); border-top-color:var(--accent); }
+  .era-btn.e3 { color:#4a6070; }
+  .era-btn.e3.active, .era-btn.e3:hover { color:var(--accent-gold); background:rgba(255,209,102,0.05); border-top-color:var(--accent-gold); }
+  .era-btn.e4 { color:#4a6070; }
+  .era-btn.e4.active, .era-btn.e4:hover { color:var(--accent-warm); background:rgba(255,107,53,0.05); border-top-color:var(--accent-warm); }
+
+  /* TIMELINE */
+  .timeline-section {
+    max-width:1200px; margin:0 auto;
+    padding:0 60px 100px;
+    position:relative;
+  }
+
+  .era-content { display:none; }
+  .era-content.active { display:block; }
+
+  .era-intro {
+    display:flex; align-items:center; gap:40px;
+    padding:40px;
+    background:var(--surface);
+    margin-bottom:2px;
+    border-right:3px solid var(--era-color, var(--accent));
+  }
+  .era-num {
+    font-size:80px; font-weight:900;
+    color:transparent;
+    -webkit-text-stroke:1px var(--era-color, var(--accent));
+    line-height:1; flex-shrink:0;
+  }
+  .era-info {}
+  .era-tag { font-size:10px; letter-spacing:4px; text-transform:uppercase; color:var(--era-color, var(--accent)); margin-bottom:8px; }
+  .era-name { font-size:32px; font-weight:700; color:#fff; margin-bottom:8px; }
+  .era-range { font-size:13px; color:var(--muted); }
+
+  /* EVENTS */
+  .events-list { display:flex; flex-direction:column; gap:2px; }
+
+  .event-item {
+    display:grid;
+    grid-template-columns:120px 1px 1fr;
+    gap:0;
+    background:var(--surface);
+    position:relative;
+    overflow:hidden;
+    transition:background 0.3s;
+  }
+  .event-item:hover { background:var(--surface2); }
+
+  .event-date-col {
+    padding:32px 24px;
+    display:flex;
+    align-items:flex-start;
+    justify-content:flex-end;
+  }
+  .event-date {
+    font-size:22px; font-weight:900;
+    color:transparent;
+    -webkit-text-stroke:1px var(--muted);
+    line-height:1; text-align:left;
+    transition:all 0.3s;
+  }
+  .event-item:hover .event-date {
+    -webkit-text-stroke-color:var(--era-color, var(--accent));
+    color:transparent;
+  }
+
+  .event-divider {
+    width:1px;
+    background:var(--border);
+    position:relative;
+  }
+  .event-divider::before {
+    content:'';
+    position:absolute;
+    top:50%; left:50%;
+    transform:translate(-50%,-50%);
+    width:8px; height:8px;
+    border-radius:50%;
+    background:var(--era-color, var(--accent));
+    opacity:0;
+    transition:opacity 0.3s;
+    box-shadow:0 0 12px var(--era-color, var(--accent));
+  }
+  .event-item:hover .event-divider::before { opacity:1; }
+
+  .event-content { padding:32px 40px; }
+  .event-type {
+    font-size:10px; letter-spacing:4px; text-transform:uppercase;
+    margin-bottom:10px;
+  }
+  .event-title {
+    font-size:20px; font-weight:700; color:#fff; margin-bottom:10px;
+  }
+  .event-text {
+    font-size:13px; font-weight:300; color:var(--muted); line-height:2;
+  }
+  .event-tags {
+    display:flex; gap:8px; margin-top:16px; flex-wrap:wrap;
+  }
+  .event-tag {
+    font-size:10px; letter-spacing:2px; text-transform:uppercase;
+    padding:4px 10px;
+    border:1px solid var(--border);
+    color:var(--muted);
+  }
+
+  /* ERA COLOR VARS */
+  .era1 { --era-color: #06d6a0; }
+  .era2 { --era-color: #00c8ff; }
+  .era3 { --era-color: #ffd166; }
+  .era4 { --era-color: #ff6b35; }
+
+  footer {
+    border-top:1px solid var(--border);
+    padding:60px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+  }
+  .footer-logo { font-size:16px; font-weight:900; letter-spacing:6px; color:var(--accent); }
+  .footer-copy { font-size:12px; color:var(--muted); }
+  .footer-links { display:flex; gap:32px; list-style:none; }
+  .footer-links a { font-size:12px; color:var(--muted); text-decoration:none; letter-spacing:2px; transition:color 0.3s; }
+  .footer-links a:hover { color:var(--accent); }
+
+  @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+  .anim { opacity:0; animation:fadeUp 0.7s forwards; }
+  .anim-d1{animation-delay:0.1s} .anim-d2{animation-delay:0.2s}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="logo">ORUSIS</a>
+  <ul class="nav-links">
+    <li><a href="index.html">خانه</a></li>
+    <li><a href="story.html">داستان</a></li>
+    <li><a href="characters.html">شخصیت‌ها</a></li>
+    <li><a href="timeline.html" class="active">ترتیب زمانی</a></li>
+  </ul>
+</nav>
+
+<div class="page-header">
+  <p class="breadcrumb">ORUSIS / <span>خط زمانی</span></p>
+  <h1 class="page-title anim anim-d1">ترتیب<br><em>رویدادها</em></h1>
+  <p class="page-desc anim anim-d2">تاریخ اوروسیس از آغاز پروژه تا امروز — هر رویداد، تکه‌ای از پازل بزرگ.</p>
+</div>
+
+<div class="era-bar">
+  <button class="era-btn e1 active" onclick="showEra('era1',this)">
+    <span class="era-year">۲۲۸۰</span>
+    دوران آغاز
+  </button>
+  <button class="era-btn e2" onclick="showEra('era2',this)">
+    <span class="era-year">۲۳۱۲</span>
+    دوران فرود
+  </button>
+  <button class="era-btn e3" onclick="showEra('era3',this)">
+    <span class="era-year">۲۳۵۰</span>
+    دوران شکاف
+  </button>
+  <button class="era-btn e4" onclick="showEra('era4',this)">
+    <span class="era-year">۲۳۸۷</span>
+    دوران جنگ
+  </button>
+</div>
+
+<div class="timeline-section">
+
+  <!-- ERA 1 -->
+  <div class="era-content active era1" id="era1">
+    <div class="era-intro">
+      <div class="era-num">۱</div>
+      <div class="era-info">
+        <p class="era-tag">// دوران اول</p>
+        <h2 class="era-name">آغاز — زمین رو به پایان</h2>
+        <p class="era-range">۲۲۸۰ — ۲۳۱۱ میلادی</p>
+      </div>
+    </div>
+    <div class="events-list">
+      <div class="event-item">
+        <div class="event-date-col"><span class="event-date">۲۲۸۰</span></div>
+        <div class="event-divider"></div>
+        <div class="event-content">
+          <p class="event-type" style="color:#06d6a0">// رویداد بنیادین</p>
+          <h3 class="event-title">اعلام وضعیت اضطراری زمین</h3>
+          <p class="event-text">دمای متوسط زمین ۴ درجه افزایش یافته. سازمان ملل «پروژه ستاره‌نشین» را رسماً آغاز می‌کند.</p>
+          <div class="event-tags">
+            <span class="event-tag">زمین</span>
+            <span class="event-tag">سیاست</span>
+          </div>
+        </div>
+      </div>
+      <div class="event-item">
+        <div class="event-date-col"><span class="event-date">۲۲۹۴</span></div>
+        <div class="event-divider"></div>
+        <div class="event-content">
+          <p class="event-type" style="color:#06d6a0">// کشف</p>
+          <h3 class="event-title">شناسایی اوروسیس</h3>
+          <p class="event-text">تلسکوپ فضایی نسل پنجم سیاره‌ای با اتمسفر قابل تنفس در ۴۲ سال نوری شناسایی می‌کند. نام‌گذاری: اوروسیس.</p>
+          <div class="event-tags">
+            <span class="event-tag">کشف</span>
+            <span class="event-tag">فضا</span>
+          </div>
+        </div>
+      </div>
+      <div class="event-item">
+        <div class="event-date-col"><span class="event-date">۲۳۰۸</span></div>
+        <div class="event-divider"></div>
+        <div class="event-content">
+          <p class="event-type" style="color:#06d6a0">// آغاز عملیات</p>
+          <h3 class="event-title">ساخت کشتی‌های مهاجر</h3>
+          <p class="event-text">۱۲ کشتی بزرگ برای حمل ۲۰۰ هزار نفر ساخته می‌شوند. انتخاب مسافران با لاتری و گزینش ژنتیکی انجام می‌شود.</p>
+          <div class="event-tags">
+            <span class="event-tag">فناوری</span>
+            <span class="event-tag">مهاجرت</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ERA 2 -->
+  <div class="era-content era2" id="era2">
+    <div class="era-intro">
+      <div class="era-num">۲</div>
+      <div class="era-info">
+        <p class="era-tag">// دوران دوم</p>
+        <h2 class="era-name">فرود — شروع همه چیز</h2>
+        <p class="era-range">۲۳۱۲ — ۲۳۴۹ میلادی</p>
+      </div>
+    </div>
+    <div class="events-list">
+      <div class="event-item">
+        <div class="event-date-col"><span class="event-date">۲۳۱۲</span></div>
+        <div class="event-divider"></div>
+        <div class="event-content">
+          <p class="event-type" style="color:#00c8ff">// رویداد اصلی</p>
+          <h3 class="event-title">فرود اول</h3>
+          <p class="event-text">اولین کشتی به اوروسیس می‌رسد. ۱۴۰ هزار نفر از ۲۰۰ هزار نفر زنده‌اند. سیاره سبزتر از پیش‌بینی است — و خطرناک‌تر.</p>
+          <div class="event-tags">
+            <span class="event-tag">فرود</span>
+            <span class="event-tag">بقا</span>
+          </div>
+        </div>
+      </div>
+      <div class="event-item">
+        <div class="event-date-col"><span class="event-date">۲۳۱۸</span></div>
+        <div class="event-divider"></div>
+        <div class="event-content">
+          <p class="event-type" style="color:#00c8ff">// شکل‌گیری</p>
+          <h3 class="event-title">تأسیس شورای موقت</h3>
+          <p class="event-text">برای اداره مستعمره، «شورای موقت» تأسیس می‌شود. «موقت» هرگز تمام نمی‌شود.</p>
+          <div class="event-tags">
+            <span class="event-tag">سیاست</span>
+            <span class="event-tag">شورا</span>
+          </div>
+        </div>
+      </div>
+      <div class="event-item">
+        <div class="event-date-col"><span class="event-date">۲۳۳۵</span></div>
+        <div class="event-divider"></div>
+        <div class="event-content">
+          <p class="event-type" style="color:#00c8ff">// کشف</p>
+          <h3 class="event-title">معادن انرژی کشف می‌شوند</h3>
+          <p class="event-text">در شمال قاره اول، منابع عظیم «کریستال‌های نور» پیدا می‌شود. جنگ برای کنترل آنها آغاز می‌شود.</p>
+          <div class="event-tags">
+            <span class="event-tag">منابع</span>
+            <span class="event-tag">کشف</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ERA 3 -->
+  <div class="era-content era3" id="era3">
+    <div class="era-intro">
+      <div class="era-num">۳</div>
+      <div class="era-info">
+        <p class="era-tag">// دوران سوم</p>
+        <h2 class="era-name">شکاف — وقتی وحدت شکست</h2>
+        <p class="era-range">۲۳۵۰ — ۲۳۸۶ میلادی</p>
+      </div>
+    </div>
+    <div class="events-list">
+      <div class="event-item">
+        <div class="event-date-col"><span class="event-date">۲۳۵۰</span></div>
+        <div class="event-divider"></div>
+        <div class="event-content">
+          <p class="event-type" style="color:#ffd166">// انشعاب</p>
+          <h3 class="event-title">تشکیل اتحادیه زمین‌داران</h3>
+          <p class="event-text">ثروتمندترین خانواده‌های مستعمره اتحادیه خود را تشکیل می‌دهند و خود را از شورا جدا اعلام می‌کنند.</p>
+          <div class="event-tags">
+            <span class="event-tag">سیاست</span>
+            <span class="event-tag">اتحادیه</span>
+          </div>
+        </div>
+      </div>
+      <div class="event-item">
+        <div class="event-date-col"><span class="event-date">۲۳۶۸</span></div>
+        <div class="event-divider"></div>
+        <div class="event-content">
+          <p class="event-type" style="color:#ffd166">// شورش</p>
+          <h3 class="event-title">اولین قیام</h3>
+          <p class="event-text">کارگران معادن دست به اعتصاب می‌زنند. شورا با زور پاسخ می‌دهد. جنبش آزادی متولد می‌شود.</p>
+          <div class="event-tags">
+            <span class="event-tag">قیام</span>
+            <span class="event-tag">جنبش آزادی</span>
+          </div>
+        </div>
+      </div>
+      <div class="event-item">
+        <div class="event-date-col"><span class="event-date">۲۳۸۰</span></div>
+        <div class="event-divider"></div>
+        <div class="event-content">
+          <p class="event-type" style="color:#ffd166">// رمز</p>
+          <h3 class="event-title">X — صفر ظاهر می‌شود</h3>
+          <p class="event-text">پیام‌هایی رمزنگاری‌شده برای رهبران همه فراکسیون‌ها ارسال می‌شود. فرستنده خود را «صفر» می‌نامد.</p>
+          <div class="event-tags">
+            <span class="event-tag">رمز</span>
+            <span class="event-tag">صفر</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ERA 4 -->
+  <div class="era-content era4" id="era4">
+    <div class="era-intro">
+      <div class="era-num">۴</div>
+      <div class="era-info">
+        <p class="era-tag">// دوران چهارم</p>
+        <h2 class="era-name">جنگ — لحظه‌ای که همه چیز عوض شد</h2>
+        <p class="era-range">۲۳۸۷ — اکنون</p>
+      </div>
+    </div>
+    <div class="events-list">
+      <div class="event-item">
+        <div class="event-date-col"><span class="event-date">۲۳۸۷</span></div>
+        <div class="event-divider"></div>
+        <div class="event-content">
+          <p class="event-type" style="color:#ff6b35">// آغاز جنگ</p>
+          <h3 class="event-title">انفجار مرکز انرژی</h3>
+          <p class="event-text">بزرگ‌ترین نیروگاه اوروسیس منفجر می‌شود. هیچ‌کس مسئولیت را نمی‌پذیرد. همه سه فراکسیون یکدیگر را متهم می‌کنند.</p>
+          <div class="event-tags">
+            <span class="event-tag">جنگ</span>
+            <span class="event-tag">بحران</span>
+          </div>
+        </div>
+      </div>
+      <div class="event-item">
+        <div class="event-date-col"><span class="event-date">۲۳۸۷</span></div>
+        <div class="event-divider"></div>
+        <div class="event-content">
+          <p class="event-type" style="color:#ff6b35">// تغییر بازی</p>
+          <h3 class="event-title">پیام صفر برای همه</h3>
+          <p class="event-text">برای اولین بار، صفر یک پیام عمومی ارسال می‌کند: «حقیقت اوروسیس را به شما نشان خواهم داد. آماده باشید.»</p>
+          <div class="event-tags">
+            <span class="event-tag">صفر</span>
+            <span class="event-tag">رمز</span>
+          </div>
+        </div>
+      </div>
+      <div class="event-item">
+        <div class="event-date-col"><span class="event-date">???</span></div>
+        <div class="event-divider"></div>
+        <div class="event-content">
+          <p class="event-type" style="color:#ff6b35">// آینده</p>
+          <h3 class="event-title">پایان؟</h3>
+          <p class="event-text">این داستان هنوز تمام نشده. آنچه بعد اتفاق می‌افتد، بستگی دارد به اینکه چه کسی حقیقت را زودتر بیابد.</p>
+          <div class="event-tags">
+            <span class="event-tag">ادامه دارد...</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <div class="footer-logo">ORUSIS</div>
+  <p class="footer-copy">© ۱۴۰۳ اوروسیس</p>
+  <ul class="footer-links">
+    <li><a href="story.html">داستان</a></li>
+    <li><a href="characters.html">شخصیت‌ها</a></li>
+  </ul>
+</footer>
+
+<script>
+function showEra(eraId, btn) {
+  document.querySelectorAll('.era-content').forEach(e=>e.classList.remove('active'));
+  document.querySelectorAll('.era-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById(eraId).classList.add('active');
+  btn.classList.add('active');
+}
+</script>
+</body>
+</html>
