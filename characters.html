@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>شخصیت‌ها — اوروسیس</title>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100;300;400;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #020408;
+    --surface: #070d14;
+    --surface2: #0c1824;
+    --accent: #00c8ff;
+    --accent-warm: #ff6b35;
+    --accent-gold: #ffd166;
+    --glow: rgba(0,200,255,0.12);
+    --text: #c8dde8;
+    --muted: #4a6070;
+    --border: rgba(0,200,255,0.12);
+    --font: 'Vazirmatn', sans-serif;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--text); font-family:var(--font); overflow-x:hidden; }
+
+  nav {
+    position:fixed; top:0; left:0; right:0; z-index:100;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:24px 60px;
+    background:rgba(2,4,8,0.92);
+    border-bottom:1px solid var(--border);
+    backdrop-filter:blur(16px);
+  }
+  .logo { font-size:20px; font-weight:900; letter-spacing:6px; color:var(--accent); text-decoration:none; }
+  .nav-links { display:flex; gap:40px; list-style:none; }
+  .nav-links a { color:var(--muted); text-decoration:none; font-size:12px; letter-spacing:2px; transition:color 0.3s; }
+  .nav-links a:hover, .nav-links a.active { color:var(--accent); }
+
+  /* HEADER */
+  .page-header {
+    padding:160px 60px 80px;
+    max-width:1200px; margin:0 auto;
+  }
+  .breadcrumb { font-size:11px; letter-spacing:4px; color:var(--muted); margin-bottom:24px; text-transform:uppercase; }
+  .breadcrumb span { color:var(--accent); }
+  .page-title { font-size:clamp(52px,7vw,90px); font-weight:900; color:#fff; line-height:1; letter-spacing:-2px; }
+  .page-title em { font-style:normal; color:transparent; -webkit-text-stroke:1px rgba(0,200,255,0.5); }
+  .page-desc { font-size:15px; font-weight:300; color:var(--muted); max-width:520px; line-height:2; margin-top:20px; }
+
+  /* FILTER */
+  .filter-bar {
+    max-width:1200px; margin:0 auto;
+    padding:0 60px 48px;
+    display:flex; gap:12px; align-items:center;
+  }
+  .filter-label { font-size:11px; letter-spacing:3px; color:var(--muted); text-transform:uppercase; margin-left:8px; }
+  .filter-btn {
+    padding:8px 20px;
+    background:transparent;
+    border:1px solid var(--border);
+    color:var(--muted);
+    font-family:var(--font);
+    font-size:11px;
+    letter-spacing:2px;
+    cursor:pointer;
+    transition:all 0.3s;
+    text-transform:uppercase;
+  }
+  .filter-btn.active, .filter-btn:hover {
+    background:var(--glow);
+    border-color:var(--accent);
+    color:var(--accent);
+  }
+
+  /* CHARACTERS GRID */
+  .chars-section {
+    max-width:1200px; margin:0 auto;
+    padding:0 60px 100px;
+  }
+  .chars-grid {
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:2px;
+  }
+
+  .char-card {
+    background:var(--surface);
+    position:relative;
+    overflow:hidden;
+    cursor:pointer;
+    transition:all 0.4s;
+  }
+  .char-card:hover { background:var(--surface2); }
+
+  .char-portrait {
+    width:100%;
+    aspect-ratio:3/4;
+    position:relative;
+    overflow:hidden;
+  }
+  .char-bg {
+    position:absolute; inset:0;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .char-icon-large {
+    font-size:120px;
+    opacity:0.07;
+    transition:transform 0.6s, opacity 0.4s;
+  }
+  .char-card:hover .char-icon-large { transform:scale(1.1); opacity:0.12; }
+  .char-silhouette {
+    position:absolute;
+    bottom:0; left:50%;
+    transform:translateX(-50%);
+    font-size:160px;
+    line-height:1;
+    filter:drop-shadow(0 0 60px currentColor);
+    transition:transform 0.4s;
+  }
+  .char-card:hover .char-silhouette { transform:translateX(-50%) translateY(-8px); }
+
+  .char-corner {
+    position:absolute; top:20px; right:20px;
+    font-size:10px; letter-spacing:3px; text-transform:uppercase;
+    padding:4px 10px;
+    border:1px solid currentColor;
+  }
+
+  .char-gradient {
+    position:absolute;
+    bottom:0; left:0; right:0;
+    height:60%;
+    background:linear-gradient(to top, var(--surface), transparent);
+  }
+
+  .char-info {
+    padding:32px;
+    position:relative;
+  }
+  .char-faction {
+    font-size:10px; letter-spacing:4px; text-transform:uppercase;
+    margin-bottom:10px; display:block;
+  }
+  .char-name {
+    font-size:26px; font-weight:900; color:#fff;
+    margin-bottom:6px;
+  }
+  .char-role {
+    font-size:12px; letter-spacing:2px; color:var(--muted);
+    text-transform:uppercase; margin-bottom:16px;
+  }
+  .char-desc {
+    font-size:13px; font-weight:300; color:var(--muted);
+    line-height:1.9;
+    max-height:0; overflow:hidden;
+    transition:max-height 0.5s ease;
+  }
+  .char-card:hover .char-desc { max-height:200px; }
+
+  .char-stats {
+    display:flex; gap:24px; margin-top:20px;
+    padding-top:20px;
+    border-top:1px solid var(--border);
+    opacity:0;
+    transform:translateY(10px);
+    transition:all 0.4s 0.1s;
+  }
+  .char-card:hover .char-stats { opacity:1; transform:translateY(0); }
+  .stat { text-align:center; }
+  .stat-val { font-size:18px; font-weight:700; display:block; }
+  .stat-lbl { font-size:9px; letter-spacing:2px; color:var(--muted); text-transform:uppercase; }
+
+  .char-line {
+    position:absolute; top:0; left:0;
+    width:2px; height:0;
+    transition:height 0.4s;
+  }
+  .char-card:hover .char-line { height:100%; }
+
+  /* FACTION COLORS */
+  .faction-council { --f-color: #00c8ff; }
+  .faction-union   { --f-color: #ffd166; }
+  .faction-free    { --f-color: #ff6b35; }
+  .faction-unknown { --f-color: #8892a0; }
+
+  .char-card .char-corner,
+  .char-card .char-faction,
+  .char-card .char-line { color: var(--f-color); }
+  .char-card .char-line { background: var(--f-color); }
+  .char-card .char-silhouette { color: var(--f-color); }
+
+  footer {
+    border-top:1px solid var(--border);
+    padding:60px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+  }
+  .footer-logo { font-size:16px; font-weight:900; letter-spacing:6px; color:var(--accent); }
+  .footer-copy { font-size:12px; color:var(--muted); }
+  .footer-links { display:flex; gap:32px; list-style:none; }
+  .footer-links a { font-size:12px; color:var(--muted); text-decoration:none; letter-spacing:2px; transition:color 0.3s; }
+  .footer-links a:hover { color:var(--accent); }
+
+  @keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+  .anim { opacity:0; animation:fadeUp 0.7s forwards; }
+  .anim-d1{animation-delay:0.1s} .anim-d2{animation-delay:0.2s} .anim-d3{animation-delay:0.3s}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="logo">ORUSIS</a>
+  <ul class="nav-links">
+    <li><a href="index.html">خانه</a></li>
+    <li><a href="story.html">داستان</a></li>
+    <li><a href="characters.html" class="active">شخصیت‌ها</a></li>
+    <li><a href="timeline.html">ترتیب زمانی</a></li>
+  </ul>
+</nav>
+
+<div class="page-header">
+  <p class="breadcrumb">ORUSIS / <span>شخصیت‌ها</span></p>
+  <h1 class="page-title anim anim-d1">اهالی<br><em>اوروسیس</em></h1>
+  <p class="page-desc anim anim-d2">هر کدام داستانی دارند. هر کدام انتخابی کرده‌اند که این دنیا را ساخته.</p>
+</div>
+
+<div class="filter-bar anim anim-d3">
+  <span class="filter-label">فراکسیون:</span>
+  <button class="filter-btn active" onclick="filterChars('all',this)">همه</button>
+  <button class="filter-btn" onclick="filterChars('council',this)">شورای فناوری</button>
+  <button class="filter-btn" onclick="filterChars('union',this)">اتحادیه</button>
+  <button class="filter-btn" onclick="filterChars('free',this)">جنبش آزادی</button>
+  <button class="filter-btn" onclick="filterChars('unknown',this)">ناشناخته</button>
+</div>
+
+<div class="chars-section">
+  <div class="chars-grid" id="charsGrid">
+
+    <div class="char-card faction-council" data-faction="council">
+      <div class="char-line"></div>
+      <div class="char-portrait">
+        <div class="char-bg"><span class="char-icon-large">◈</span></div>
+        <span class="char-silhouette">🧑‍💻</span>
+        <div class="char-gradient"></div>
+        <span class="char-corner">شورا</span>
+      </div>
+      <div class="char-info">
+        <span class="char-faction">// شورای فناوری</span>
+        <h3 class="char-name">آریا سن</h3>
+        <p class="char-role">مهندس ارشد زیرساخت</p>
+        <p class="char-desc">طراح شبکه انرژی اوروسیس. باور دارد هر مشکلی راه‌حل فنی دارد — تا روزی که پیش روی یک مشکل انسانی قرار گرفت.</p>
+        <div class="char-stats">
+          <div class="stat"><span class="stat-val" style="color:#00c8ff">۹۲</span><span class="stat-lbl">هوش</span></div>
+          <div class="stat"><span class="stat-val" style="color:#00c8ff">۴۵</span><span class="stat-lbl">قدرت</span></div>
+          <div class="stat"><span class="stat-val" style="color:#00c8ff">۷۸</span><span class="stat-lbl">تأثیر</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="char-card faction-free" data-faction="free">
+      <div class="char-line"></div>
+      <div class="char-portrait">
+        <div class="char-bg"><span class="char-icon-large">◉</span></div>
+        <span class="char-silhouette">🧑‍🦱</span>
+        <div class="char-gradient"></div>
+        <span class="char-corner">آزاد</span>
+      </div>
+      <div class="char-info">
+        <span class="char-faction">// جنبش آزادی</span>
+        <h3 class="char-name">کاوه رخ</h3>
+        <p class="char-role">رهبر میدانی</p>
+        <p class="char-desc">در فرود اول متولد شد، در جنگ اول جنگید. حالا فقط یک چیز می‌خواهد: که اوروسیس به مردمانش تعلق داشته باشد.</p>
+        <div class="char-stats">
+          <div class="stat"><span class="stat-val" style="color:#ff6b35">۶۵</span><span class="stat-lbl">هوش</span></div>
+          <div class="stat"><span class="stat-val" style="color:#ff6b35">۸۸</span><span class="stat-lbl">قدرت</span></div>
+          <div class="stat"><span class="stat-val" style="color:#ff6b35">۹۵</span><span class="stat-lbl">تأثیر</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="char-card faction-union" data-faction="union">
+      <div class="char-line"></div>
+      <div class="char-portrait">
+        <div class="char-bg"><span class="char-icon-large">⬡</span></div>
+        <span class="char-silhouette">🧑‍💼</span>
+        <div class="char-gradient"></div>
+        <span class="char-corner">اتحادیه</span>
+      </div>
+      <div class="char-info">
+        <span class="char-faction">// اتحادیه زمین‌داران</span>
+        <h3 class="char-name">لیلا مرک</h3>
+        <p class="char-role">رئیس اتاق تجارت</p>
+        <p class="char-desc">پول، همیشه پول. اما یک راز دارد که ارزشش از تمام معادنِ اوروسیس بیشتر است.</p>
+        <div class="char-stats">
+          <div class="stat"><span class="stat-val" style="color:#ffd166">۸۵</span><span class="stat-lbl">هوش</span></div>
+          <div class="stat"><span class="stat-val" style="color:#ffd166">۵۲</span><span class="stat-lbl">قدرت</span></div>
+          <div class="stat"><span class="stat-val" style="color:#ffd166">۹۰</span><span class="stat-lbl">تأثیر</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="char-card faction-unknown" data-faction="unknown">
+      <div class="char-line"></div>
+      <div class="char-portrait">
+        <div class="char-bg"><span class="char-icon-large">?</span></div>
+        <span class="char-silhouette">👤</span>
+        <div class="char-gradient"></div>
+        <span class="char-corner">???</span>
+      </div>
+      <div class="char-info">
+        <span class="char-faction">// ناشناخته</span>
+        <h3 class="char-name">X — صفر</h3>
+        <p class="char-role">هویت نامشخص</p>
+        <p class="char-desc">هیچ‌کس نمی‌داند از کجا آمده. هیچ‌کس نمی‌داند چه می‌خواهد. اما همه فراکسیون‌ها از او می‌ترسند.</p>
+        <div class="char-stats">
+          <div class="stat"><span class="stat-val" style="color:#8892a0">??</span><span class="stat-lbl">هوش</span></div>
+          <div class="stat"><span class="stat-val" style="color:#8892a0">??</span><span class="stat-lbl">قدرت</span></div>
+          <div class="stat"><span class="stat-val" style="color:#8892a0">??</span><span class="stat-lbl">تأثیر</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="char-card faction-council" data-faction="council">
+      <div class="char-line"></div>
+      <div class="char-portrait">
+        <div class="char-bg"><span class="char-icon-large">◈</span></div>
+        <span class="char-silhouette">🧬</span>
+        <div class="char-gradient"></div>
+        <span class="char-corner">شورا</span>
+      </div>
+      <div class="char-info">
+        <span class="char-faction">// شورای فناوری</span>
+        <h3 class="char-name">دکتر ایون تال</h3>
+        <p class="char-role">دانشمند ژنتیک</p>
+        <p class="char-desc">می‌خواست انسان را با اوروسیس سازگار کند. موفق شد — اما نه به شکلی که انتظار داشت.</p>
+        <div class="char-stats">
+          <div class="stat"><span class="stat-val" style="color:#00c8ff">۹۸</span><span class="stat-lbl">هوش</span></div>
+          <div class="stat"><span class="stat-val" style="color:#00c8ff">۳۰</span><span class="stat-lbl">قدرت</span></div>
+          <div class="stat"><span class="stat-val" style="color:#00c8ff">۶۰</span><span class="stat-lbl">تأثیر</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="char-card faction-free" data-faction="free">
+      <div class="char-line"></div>
+      <div class="char-portrait">
+        <div class="char-bg"><span class="char-icon-large">◉</span></div>
+        <span class="char-silhouette">🧕</span>
+        <div class="char-gradient"></div>
+        <span class="char-corner">آزاد</span>
+      </div>
+      <div class="char-info">
+        <span class="char-faction">// جنبش آزادی</span>
+        <h3 class="char-name">سانا ویر</h3>
+        <p class="char-role">نقشه‌بردار و جاسوس</p>
+        <p class="char-desc">می‌گویند نقشه تمام تونل‌های زیرزمینی اوروسیس را از حفظ دارد. می‌گویند چیزهایی در آن تونل‌ها دیده که به هیچ‌کس نگفته.</p>
+        <div class="char-stats">
+          <div class="stat"><span class="stat-val" style="color:#ff6b35">۸۰</span><span class="stat-lbl">هوش</span></div>
+          <div class="stat"><span class="stat-val" style="color:#ff6b35">۷۲</span><span class="stat-lbl">قدرت</span></div>
+          <div class="stat"><span class="stat-val" style="color:#ff6b35">۶۸</span><span class="stat-lbl">تأثیر</span></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  <div class="footer-logo">ORUSIS</div>
+  <p class="footer-copy">© ۱۴۰۳ اوروسیس</p>
+  <ul class="footer-links">
+    <li><a href="story.html">داستان</a></li>
+    <li><a href="timeline.html">خط زمانی</a></li>
+  </ul>
+</footer>
+
+<script>
+function filterChars(faction, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.char-card').forEach(card=>{
+    if(faction==='all' || card.dataset.faction===faction){
+      card.style.display='block';
+    } else {
+      card.style.display='none';
+    }
+  });
+}
+</script>
+</body>
+</html>
