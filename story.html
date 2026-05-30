@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>داستان — اوروسیس</title>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100;300;400;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #020408;
+    --surface: #070d14;
+    --surface2: #0a1420;
+    --accent: #00c8ff;
+    --accent2: #ff6b35;
+    --glow: rgba(0,200,255,0.12);
+    --text: #c8dde8;
+    --muted: #4a6070;
+    --border: rgba(0,200,255,0.12);
+    --font: 'Vazirmatn', sans-serif;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font);
+    overflow-x: hidden;
+  }
+
+  /* GRAIN OVERLAY */
+  body::before {
+    content:'';
+    position:fixed;
+    inset:0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events:none;
+    z-index:300;
+    opacity:0.4;
+  }
+
+  /* NAV */
+  nav {
+    position:fixed; top:0; left:0; right:0; z-index:100;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:24px 60px;
+    background: rgba(2,4,8,0.9);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(16px);
+  }
+  .logo { font-size:20px; font-weight:900; letter-spacing:6px; color:var(--accent); text-decoration:none; }
+  .nav-links { display:flex; gap:40px; list-style:none; }
+  .nav-links a { color:var(--muted); text-decoration:none; font-size:12px; letter-spacing:2px; transition:color 0.3s; }
+  .nav-links a:hover, .nav-links a.active { color:var(--accent); }
+
+  /* PAGE HEADER */
+  .page-header {
+    padding: 160px 60px 80px;
+    max-width: 1200px;
+    margin: 0 auto;
+    position: relative;
+  }
+  .breadcrumb {
+    font-size:11px; letter-spacing:4px; color:var(--muted); margin-bottom:24px;
+    text-transform:uppercase;
+  }
+  .breadcrumb span { color:var(--accent); }
+  .page-title {
+    font-size: clamp(52px,7vw,90px);
+    font-weight:900;
+    color:#fff;
+    line-height:1;
+    letter-spacing:-2px;
+  }
+  .page-title em {
+    font-style:normal;
+    color:transparent;
+    -webkit-text-stroke:1px rgba(0,200,255,0.5);
+  }
+  .page-desc {
+    font-size:15px; font-weight:300; color:var(--muted);
+    max-width:520px; line-height:2; margin-top:24px;
+  }
+  .header-line {
+    position:absolute;
+    right:60px; top:160px;
+    width:1px; height:140px;
+    background:linear-gradient(to bottom, var(--accent), transparent);
+  }
+
+  /* STORY TABS */
+  .story-section {
+    max-width:1200px;
+    margin: 0 auto;
+    padding: 0 60px 80px;
+  }
+  .tabs {
+    display:flex;
+    gap:0;
+    border-bottom: 1px solid var(--border);
+    margin-bottom:60px;
+  }
+  .tab-btn {
+    padding:16px 32px;
+    background:transparent;
+    border:none;
+    color:var(--muted);
+    font-family:var(--font);
+    font-size:12px;
+    letter-spacing:2px;
+    cursor:pointer;
+    position:relative;
+    transition:color 0.3s;
+    text-transform:uppercase;
+  }
+  .tab-btn::after {
+    content:'';
+    position:absolute;
+    bottom:-1px; left:0; right:0;
+    height:2px;
+    background:var(--accent);
+    transform:scaleX(0);
+    transition:transform 0.3s;
+  }
+  .tab-btn.active { color:var(--accent); }
+  .tab-btn.active::after { transform:scaleX(1); }
+  .tab-btn:hover { color:var(--text); }
+
+  .tab-panel { display:none; }
+  .tab-panel.active { display:block; }
+
+  /* STORY CARDS */
+  .stories-list {
+    display:flex;
+    flex-direction:column;
+    gap:2px;
+  }
+  .story-card {
+    background:var(--surface);
+    padding:48px;
+    display:grid;
+    grid-template-columns:80px 1fr auto;
+    gap:40px;
+    align-items:start;
+    transition:background 0.3s;
+    cursor:pointer;
+    border-right:2px solid transparent;
+    transition:all 0.3s;
+  }
+  .story-card:hover {
+    background:var(--surface2);
+    border-right-color:var(--accent);
+  }
+  .story-num {
+    font-size:48px;
+    font-weight:900;
+    color:transparent;
+    -webkit-text-stroke:1px var(--border);
+    line-height:1;
+    transition:color 0.3s, -webkit-text-stroke 0.3s;
+  }
+  .story-card:hover .story-num {
+    -webkit-text-stroke:1px var(--accent);
+  }
+  .story-meta {}
+  .story-tag {
+    font-size:10px; letter-spacing:4px; color:var(--accent2);
+    text-transform:uppercase; margin-bottom:12px;
+    display:inline-block;
+  }
+  .story-title {
+    font-size:24px; font-weight:700; color:#fff; margin-bottom:12px;
+  }
+  .story-excerpt {
+    font-size:14px; font-weight:300; color:var(--muted); line-height:2;
+  }
+  .story-arrow {
+    font-size:24px; color:var(--muted);
+    transition:color 0.3s, transform 0.3s;
+    margin-top:8px;
+  }
+  .story-card:hover .story-arrow { color:var(--accent); transform:translateX(-8px); }
+
+  /* LORE GRID */
+  .lore-grid {
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:2px;
+  }
+  .lore-card {
+    background:var(--surface);
+    padding:48px;
+    position:relative;
+    overflow:hidden;
+  }
+  .lore-card::after {
+    content:'';
+    position:absolute;
+    bottom:0; left:0; right:0;
+    height:1px;
+    background:linear-gradient(to right, var(--accent), transparent);
+    transform:scaleX(0);
+    transform-origin:right;
+    transition:transform 0.4s;
+  }
+  .lore-card:hover::after { transform:scaleX(1); }
+  .lore-icon { font-size:28px; margin-bottom:20px; display:block; }
+  .lore-title { font-size:20px; font-weight:700; color:#fff; margin-bottom:12px; }
+  .lore-text { font-size:13px; font-weight:300; color:var(--muted); line-height:2; }
+  .lore-card.wide { grid-column:span 2; }
+
+  /* QUOTE BLOCK */
+  .quote-block {
+    padding:80px 60px;
+    text-align:center;
+    position:relative;
+    overflow:hidden;
+    margin:60px 0;
+  }
+  .quote-block::before {
+    content:'';
+    position:absolute;
+    top:50%; left:50%;
+    transform:translate(-50%,-50%);
+    width:600px; height:600px;
+    background:radial-gradient(circle, rgba(0,200,255,0.05), transparent 70%);
+    pointer-events:none;
+  }
+  .quote-text {
+    font-size:clamp(22px,3vw,36px);
+    font-weight:300;
+    color:#fff;
+    line-height:1.7;
+    max-width:700px;
+    margin:0 auto;
+    position:relative;
+  }
+  .quote-text::before { content:'«'; color:var(--accent); font-size:2em; line-height:0; vertical-align:-0.4em; }
+  .quote-text::after  { content:'»'; color:var(--accent); font-size:2em; line-height:0; vertical-align:-0.4em; }
+  .quote-source { font-size:12px; letter-spacing:3px; color:var(--muted); margin-top:24px; text-transform:uppercase; }
+
+  footer {
+    border-top:1px solid var(--border);
+    padding:60px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+  }
+  .footer-logo { font-size:16px; font-weight:900; letter-spacing:6px; color:var(--accent); }
+  .footer-copy { font-size:12px; color:var(--muted); }
+  .footer-links { display:flex; gap:32px; list-style:none; }
+  .footer-links a { font-size:12px; color:var(--muted); text-decoration:none; letter-spacing:2px; transition:color 0.3s; }
+  .footer-links a:hover { color:var(--accent); }
+
+  @keyframes fadeUp {
+    from { opacity:0; transform:translateY(24px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+  .anim { opacity:0; animation:fadeUp 0.8s forwards; }
+  .anim-d1 { animation-delay:0.1s; }
+  .anim-d2 { animation-delay:0.2s; }
+  .anim-d3 { animation-delay:0.3s; }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="logo">ORUSIS</a>
+  <ul class="nav-links">
+    <li><a href="index.html">خانه</a></li>
+    <li><a href="story.html" class="active">داستان</a></li>
+    <li><a href="characters.html">شخصیت‌ها</a></li>
+    <li><a href="timeline.html">ترتیب زمانی</a></li>
+  </ul>
+</nav>
+
+<div class="page-header">
+  <div class="header-line"></div>
+  <p class="breadcrumb">ORUSIS / <span>داستان</span></p>
+  <h1 class="page-title anim anim-d1">روایت<br><em>اوروسیس</em></h1>
+  <p class="page-desc anim anim-d2">داستان‌هایی که این دنیا را می‌سازند — از آغاز استعمار تا جنگ برای آزادی.</p>
+</div>
+
+<div class="story-section">
+
+  <div class="quote-block">
+    <p class="quote-text">ما به اوروسیس نرفتیم تا نجات یابیم. ما رفتیم چون دیگر جایی برای فرار نمانده بود.</p>
+    <p class="quote-source">// آرشیو مرکزی اوروسیس — سال ۲۳۱۴</p>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="showTab('arcs','arcs-btn')" id="arcs-btn">قوس‌های داستانی</button>
+    <button class="tab-btn" onclick="showTab('lore','lore-btn')" id="lore-btn">تاریخچه دنیا</button>
+  </div>
+
+  <div class="tab-panel active" id="arcs">
+    <div class="stories-list">
+      <div class="story-card anim anim-d1">
+        <div class="story-num">۰۱</div>
+        <div class="story-meta">
+          <span class="story-tag">// قوس اول</span>
+          <h3 class="story-title">فرود</h3>
+          <p class="story-excerpt">اولین کشتی‌های استعماری به اوروسیس می‌رسند. زمین وعده داده شده است — اما سیاره دیگری دارد. شروع رابطه‌ای که هیچ‌کس برنده‌اش نیست.</p>
+        </div>
+        <div class="story-arrow">←</div>
+      </div>
+      <div class="story-card anim anim-d2">
+        <div class="story-num">۰۲</div>
+        <div class="story-meta">
+          <span class="story-tag">// قوس دوم</span>
+          <h3 class="story-title">شکاف</h3>
+          <p class="story-excerpt">پنجاه سال پس از فرود. فراکسیون‌ها شکل گرفته‌اند. منابع رو به پایان است. و کسی کشف کرد که اوروسیس واقعاً چیست.</p>
+        </div>
+        <div class="story-arrow">←</div>
+      </div>
+      <div class="story-card anim anim-d3">
+        <div class="story-num">۰۳</div>
+        <div class="story-meta">
+          <span class="story-tag">// قوس سوم</span>
+          <h3 class="story-title">جنگ سایه</h3>
+          <p class="story-excerpt">وقتی سلاح‌ها ساخته می‌شوند از چیزی که نمی‌توان دید — جنگ تازه‌ای آغاز می‌شود که هیچ‌کس نمی‌داند در آن است.</p>
+        </div>
+        <div class="story-arrow">←</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-panel" id="lore">
+    <div class="lore-grid">
+      <div class="lore-card anim anim-d1">
+        <span class="lore-icon">🌍</span>
+        <h3 class="lore-title">زمین — پیش از اوروسیس</h3>
+        <p class="lore-text">در سال ۲۲۸۰، زمین در آستانه فروپاشی اقلیمی کامل بود. پروژه اوروسیس تنها امید بشریت برای بقا شد.</p>
+      </div>
+      <div class="lore-card anim anim-d2">
+        <span class="lore-icon">🚀</span>
+        <h3 class="lore-title">سفر بزرگ</h3>
+        <p class="lore-text">۳۲ سال طول کشید تا اولین کشتی به اوروسیس برسد. از ۲۰۰ هزار نفر، ۱۴۰ هزار نفر زنده ماندند.</p>
+      </div>
+      <div class="lore-card wide anim anim-d3">
+        <span class="lore-icon">⚡</span>
+        <h3 class="lore-title">فراکسیون‌های اوروسیس</h3>
+        <p class="lore-text">سه گروه اصلی قدرت را تقسیم کردند: شورای فناوری که زیرساخت را کنترل می‌کند، اتحادیه زمین‌داران که منابع را می‌فروشد، و جنبش آزادی که می‌خواهد سیاره را از همه پس بگیرد.</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <div class="footer-logo">ORUSIS</div>
+  <p class="footer-copy">© ۱۴۰۳ اوروسیس</p>
+  <ul class="footer-links">
+    <li><a href="characters.html">شخصیت‌ها</a></li>
+    <li><a href="timeline.html">خط زمانی</a></li>
+  </ul>
+</footer>
+
+<script>
+function showTab(panelId, btnId) {
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById(panelId).classList.add('active');
+  document.getElementById(btnId).classList.add('active');
+}
+</script>
+</body>
+</html>
