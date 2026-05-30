@@ -1,277 +1,577 @@
 <!DOCTYPE html>
-<html lang="fa">
+<html lang="fa" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>سایت نویسندگی</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
-      color: white;
-      text-align: center;
-      margin: 0;
-      padding: 0;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>اوروسیس — دنیای فردا</title>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100;300;400;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #020408;
+    --surface: #070d14;
+    --accent: #00c8ff;
+    --accent2: #0066ff;
+    --glow: rgba(0,200,255,0.15);
+    --text: #c8dde8;
+    --muted: #4a6070;
+    --border: rgba(0,200,255,0.12);
+    --font: 'Vazirmatn', sans-serif;
+  }
 
-    header {
-      background-color: rgba(0, 0, 0, 0.5);
-      padding: 10px;
-    }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
 
-    nav {
-      margin: 20px 0;
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 15px;
-    }
+  html { scroll-behavior: smooth; }
 
-    nav a {
-      color: white;
-      text-decoration: none;
-    }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font);
+    overflow-x: hidden;
+    cursor: none;
+  }
 
-    .section {
-      margin-top: 30px;
-      padding: 20px;
-      background-color: rgba(0, 0, 0, 0.7);
-      border-radius: 8px;
-      margin-left: 20px;
-      margin-right: 20px;
-    }
+  /* CURSOR */
+  .cursor {
+    position: fixed;
+    width: 10px; height: 10px;
+    background: var(--accent);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%,-50%);
+    transition: transform 0.1s;
+    box-shadow: 0 0 20px var(--accent), 0 0 60px rgba(0,200,255,0.3);
+  }
+  .cursor-ring {
+    position: fixed;
+    width: 36px; height: 36px;
+    border: 1px solid rgba(0,200,255,0.5);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%,-50%);
+    transition: all 0.15s ease;
+  }
 
-    .footer {
-      margin-top: 50px;
-      padding: 10px;
-      background-color: rgba(0, 0, 0, 0.5);
-    }
+  /* STARS CANVAS */
+  #stars {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+  }
 
-    /* کادرها */
-    .cards {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 20px;
-      margin-top: 20px;
-    }
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 24px 60px;
+    background: linear-gradient(to bottom, rgba(2,4,8,0.95), transparent);
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.3s, background 0.3s;
+  }
+  nav.scrolled {
+    background: rgba(2,4,8,0.92);
+    border-color: var(--border);
+    backdrop-filter: blur(12px);
+  }
 
-    .card {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 10px;
-      padding: 15px;
-      text-align: center;
-      transition: transform 0.3s, box-shadow 0.3s;
-    }
+  .logo {
+    font-size: 22px;
+    font-weight: 900;
+    letter-spacing: 6px;
+    color: var(--accent);
+    text-transform: uppercase;
+    text-shadow: 0 0 30px rgba(0,200,255,0.6);
+    text-decoration: none;
+  }
 
-    .card h3 {
-      margin-top: 0;
-      color: #ff8800;
-    }
+  .nav-links {
+    display: flex;
+    gap: 40px;
+    list-style: none;
+  }
+  .nav-links a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 13px;
+    letter-spacing: 2px;
+    transition: color 0.3s;
+    position: relative;
+  }
+  .nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -4px; left: 0; right: 0;
+    height: 1px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transition: transform 0.3s;
+  }
+  .nav-links a:hover { color: var(--accent); }
+  .nav-links a:hover::after { transform: scaleX(1); }
 
-    .card p {
-      font-size: 14px;
-      color: #ccc;
-    }
+  /* HERO */
+  .hero {
+    position: relative;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    z-index: 1;
+    padding: 0 40px;
+  }
 
-    .card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 0 15px rgba(255, 136, 0, 0.5);
-    }
+  .hero-tag {
+    font-size: 11px;
+    letter-spacing: 6px;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    opacity: 0;
+    animation: fadeUp 1s 0.5s forwards;
+  }
 
-    .open-btn {
-      display: inline-block;
-      margin-top: 10px;
-      padding: 8px 16px;
-      background-color: #ff8800;
-      border-radius: 5px;
-      color: white;
-      text-decoration: none;
-    }
+  .hero-title {
+    font-size: clamp(64px, 10vw, 130px);
+    font-weight: 900;
+    line-height: 1;
+    color: #fff;
+    letter-spacing: -2px;
+    opacity: 0;
+    animation: fadeUp 1s 0.8s forwards;
+    text-shadow: 0 0 80px rgba(0,200,255,0.25);
+  }
 
-    /* پاپ‌آپ */
-    .popup-overlay {
-      position: fixed;
-      top: 0;
-      right: 0;
-      left: 0;
-      bottom: 0;
-      background: rgba(0,0,0,0.6);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 999;
-      padding: 20px;
-    }
+  .hero-title span {
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(0,200,255,0.6);
+  }
 
-    .popup-box {
-      background: #222;
-      padding: 20px;
-      border-radius: 10px;
-      max-width: 600px;
-      width: 100%;
-      max-height: 90vh;
-      text-align: right;
-      position: relative;
-      color: white;
-      overflow-y: auto;
-      direction: rtl;
-      box-sizing: border-box;
-    }
+  .hero-subtitle {
+    font-size: 16px;
+    font-weight: 300;
+    color: var(--muted);
+    max-width: 560px;
+    line-height: 1.9;
+    margin-top: 28px;
+    opacity: 0;
+    animation: fadeUp 1s 1.1s forwards;
+  }
 
-    .popup-box h3 {
-      margin-top: 0;
-      font-size: 22px;
-    }
+  .hero-cta {
+    display: flex;
+    gap: 20px;
+    margin-top: 52px;
+    opacity: 0;
+    animation: fadeUp 1s 1.4s forwards;
+  }
 
-    .popup-close {
-      position: absolute;
-      top: 8px;
-      left: 10px;
-      font-size: 20px;
-      cursor: pointer;
-      color: #fff;
-    }
-  </style>
+  .btn-primary {
+    padding: 14px 36px;
+    background: var(--accent);
+    color: #000;
+    font-family: var(--font);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    border: none;
+    cursor: pointer;
+    clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+    transition: all 0.3s;
+    text-decoration: none;
+  }
+  .btn-primary:hover {
+    background: #fff;
+    box-shadow: 0 0 40px rgba(0,200,255,0.5);
+    transform: translateY(-2px);
+  }
+
+  .btn-ghost {
+    padding: 14px 36px;
+    background: transparent;
+    color: var(--accent);
+    font-family: var(--font);
+    font-size: 13px;
+    font-weight: 400;
+    letter-spacing: 2px;
+    border: 1px solid var(--border);
+    cursor: pointer;
+    clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+    transition: all 0.3s;
+    text-decoration: none;
+  }
+  .btn-ghost:hover {
+    background: var(--glow);
+    border-color: var(--accent);
+  }
+
+  /* SCROLL LINE */
+  .scroll-hint {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    opacity: 0;
+    animation: fadeIn 1s 2s forwards;
+  }
+  .scroll-hint span {
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+  .scroll-line {
+    width: 1px;
+    height: 60px;
+    background: linear-gradient(to bottom, var(--accent), transparent);
+    animation: scrollPulse 2s infinite;
+  }
+
+  /* SECTIONS */
+  section { position: relative; z-index: 1; }
+
+  /* INTRO BAND */
+  .intro-band {
+    padding: 120px 60px;
+    display: grid;
+    grid-template-columns: 1fr 2px 1fr;
+    gap: 80px;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .intro-divider {
+    width: 2px;
+    height: 200px;
+    background: linear-gradient(to bottom, transparent, var(--accent), transparent);
+  }
+  .intro-label {
+    font-size: 10px;
+    letter-spacing: 5px;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+  .intro-heading {
+    font-size: 40px;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.2;
+    margin-bottom: 20px;
+  }
+  .intro-text {
+    font-size: 15px;
+    font-weight: 300;
+    color: var(--muted);
+    line-height: 2;
+  }
+  .stat-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+  }
+  .stat-item {}
+  .stat-num {
+    font-size: 48px;
+    font-weight: 900;
+    color: var(--accent);
+    display: block;
+    line-height: 1;
+  }
+  .stat-desc {
+    font-size: 12px;
+    letter-spacing: 2px;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-top: 8px;
+  }
+
+  /* FEATURES */
+  .features {
+    padding: 80px 60px 140px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .section-header {
+    text-align: center;
+    margin-bottom: 80px;
+  }
+  .section-label {
+    font-size: 10px;
+    letter-spacing: 6px;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .section-title {
+    font-size: 42px;
+    font-weight: 700;
+    color: #fff;
+  }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    background: var(--border);
+  }
+  .feature-card {
+    background: var(--surface);
+    padding: 48px 36px;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.3s;
+  }
+  .feature-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(to right, transparent, var(--accent), transparent);
+    transform: scaleX(0);
+    transition: transform 0.4s;
+  }
+  .feature-card:hover { background: #0a1520; }
+  .feature-card:hover::before { transform: scaleX(1); }
+
+  .feature-icon {
+    font-size: 32px;
+    margin-bottom: 24px;
+    display: block;
+  }
+  .feature-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 12px;
+  }
+  .feature-text {
+    font-size: 13px;
+    font-weight: 300;
+    color: var(--muted);
+    line-height: 1.9;
+  }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 60px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 1;
+    position: relative;
+  }
+  .footer-logo {
+    font-size: 18px;
+    font-weight: 900;
+    letter-spacing: 6px;
+    color: var(--accent);
+  }
+  .footer-copy {
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 1px;
+  }
+  .footer-links {
+    display: flex;
+    gap: 32px;
+    list-style: none;
+  }
+  .footer-links a {
+    font-size: 12px;
+    color: var(--muted);
+    text-decoration: none;
+    letter-spacing: 2px;
+    transition: color 0.3s;
+  }
+  .footer-links a:hover { color: var(--accent); }
+
+  /* GLITCH LINE */
+  .scanline {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.03) 2px,
+      rgba(0,0,0,0.03) 4px
+    );
+    pointer-events: none;
+    z-index: 200;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes scrollPulse {
+    0%,100% { opacity: 1; }
+    50% { opacity: 0.2; }
+  }
+</style>
 </head>
 <body>
 
-  <header>
-    <h1>خوش آمدید به سایت نویسندگی</h1>
-    <p>این سایت مکانی برای انتشار داستان‌ها و نظرات شماست</p>
-  </header>
+<div class="scanline"></div>
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+<canvas id="stars"></canvas>
 
-  <nav>
-    <a href="#admins">ادمین‌ها</a> |
-    <a href="#villains">ویلن‌ها</a> |
-    <a href="#heroes">قهرمان‌ها</a> |
-    <a href="#neutral">خنثی‌ها</a> |
-    <a href="#story">داستان‌ها</a> |
-    <a href="#about">درباره ما</a> |
-    <a href="#contact">تماس با ما</a>
-  </nav>
+<nav id="nav">
+  <a href="index.html" class="logo">ORUSIS</a>
+  <ul class="nav-links">
+    <li><a href="index.html">خانه</a></li>
+    <li><a href="story.html">داستان</a></li>
+    <li><a href="characters.html">شخصیت‌ها</a></li>
+    <li><a href="timeline.html">ترتیب زمانی</a></li>
+  </ul>
+</nav>
 
-  <div class="section" id="admins">
-    <h2>ادمین‌ها</h2>
-    <a href="#" class="open-btn" onclick="openPopup('ادمین‌ها', 'در این بخش، اطلاعات ادمین‌های سایت را مشاهده می‌کنید. مانند نویسنده اصلی، طراح، و مدیریت.')">مشاهده اطلاعات</a>
+<section class="hero">
+  <p class="hero-tag">// دنیایی در دل کهکشان</p>
+  <h1 class="hero-title">اورو<span>سیس</span></h1>
+  <p class="hero-subtitle">
+    در سال‌هایی که زمین دیگر کافی نبود، انسان به ستاره‌ها رسید.
+    اوروسیس — آخرین امید، اولین خطر.
+  </p>
+  <div class="hero-cta">
+    <a href="story.html" class="btn-primary">ورود به داستان</a>
+    <a href="characters.html" class="btn-ghost">شخصیت‌ها</a>
   </div>
+  <div class="scroll-hint">
+    <span>اسکرول</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
 
-  <!-- ویلن‌ها -->
-  <div class="section" id="villains">
-    <h2>ویلن‌ها</h2>
-    <div class="cards">
-      <div class="card">
-        <h3>لاکیفر</h3>
-        <p>پادشاه تاریکی، دشمن قسم‌خورده قهرمانان.</p>
-        <a href="#" class="open-btn" onclick="openPopup('لاکیفر', 'بیوگرافی کامل لاکیفر...')">جزئیات</a>
+<section>
+  <div class="intro-band">
+    <div>
+      <p class="intro-label">// درباره اوروسیس</p>
+      <h2 class="intro-heading">یک دنیا.<br>هزار راز.<br>یک انتخاب.</h2>
+      <p class="intro-text">اوروسیس سیاره‌ای است در حاشیه کهکشان راه شیری — جایی که تکنولوژی با بقا درهم آمیخته و انسان‌ها برای کنترل آخرین منابع می‌جنگند.</p>
+    </div>
+    <div class="intro-divider"></div>
+    <div class="stat-grid">
+      <div class="stat-item">
+        <span class="stat-num">۲۳۸۷</span>
+        <p class="stat-desc">سال وقوع داستان</p>
       </div>
-      <div class="card">
-        <h3>مورتان آرکید</h3>
-        <p>دانشمندی دیوانه با ماشین‌های مرگبار.</p>
-        <a href="#" class="open-btn" onclick="openPopup('مورتان آرکید', 'بیوگرافی کامل مورتان آرکید...')">جزئیات</a>
+      <div class="stat-item">
+        <span class="stat-num">۷</span>
+        <p class="stat-desc">بخش اصلی دنیا</p>
       </div>
-      <div class="card">
-        <h3>تراداموس</h3>
-        <p>جادوگری تاریک با نفرین‌های باستانی.</p>
-        <a href="#" class="open-btn" onclick="openPopup('تراداموس', 'بیوگرافی کامل تراداموس...')">جزئیات</a>
+      <div class="stat-item">
+        <span class="stat-num">۱۲+</span>
+        <p class="stat-desc">شخصیت اصلی</p>
       </div>
-      <div class="card">
-        <h3>آنتون کارتز</h3>
-        <p>ژنرال بی‌رحم با ارتشی سایبری.</p>
-        <a href="#" class="open-btn" onclick="openPopup('آنتون کارتز', 'بیوگرافی کامل آنتون کارتز...')">جزئیات</a>
-      </div>
-      <div class="card">
-        <h3>ندور</h3>
-        <p>موجودی ناشناخته از جهان‌های موازی.</p>
-        <a href="#" class="open-btn" onclick="openPopup('ندور', 'بیوگرافی کامل ندور...')">جزئیات</a>
+      <div class="stat-item">
+        <span class="stat-num">∞</span>
+        <p class="stat-desc">احتمال پایان</p>
       </div>
     </div>
   </div>
+</section>
 
-  <!-- قهرمان‌ها -->
-  <div class="section" id="heroes">
-    <h2>قهرمان‌ها</h2>
-    <div class="cards">
-      <div class="card">
-        <h3>زتا</h3>
-        <p>توانایی پرواز و تولید سرب مذاب.</p>
-        <a href="#" class="open-btn" onclick="openPopup('زتا', 'بیوگرافی کامل زتا...')">جزئیات</a>
-      </div>
-      <div class="card">
-        <h3>زتانور</h3>
-        <p>قدرت ایجاد پشیمانی ذهنی در دشمنان.</p>
-        <a href="#" class="open-btn" onclick="openPopup('زتانور', 'بیوگرافی کامل زتانور...')">جزئیات</a>
-      </div>
-      <div class="card">
-        <h3>دکتر المنت</h3>
-        <p>دانشمند و مبارز با قدرت‌های ویژه.</p>
-        <a href="#" class="open-btn" onclick="openPopup('دکتر المنت', 'بیوگرافی کامل دکتر المنت...')">جزئیات</a>
-      </div>
-      <div class="card">
-        <h3>الکسیس مارکوس</h3>
-        <p>مردی که چهار عنصر را کنترل می‌کند.</p>
-        <a href="#" class="open-btn" onclick="openPopup('الکسیس مارکوس', 'بیوگرافی کامل الکسیس مارکوس...')">جزئیات</a>
-      </div>
-      <div class="card">
-        <h3>تریون</h3>
-        <p>فرزند زتانور و دکتر المنت با نیروی بی‌کران.</p>
-        <a href="#" class="open-btn" onclick="openPopup('تریون', 'بیوگرافی کامل تریون...')">جزئیات</a>
-      </div>
+<section class="features">
+  <div class="section-header">
+    <p class="section-label">// ستون‌های این دنیا</p>
+    <h2 class="section-title">چه چیزی اوروسیس را می‌سازد؟</h2>
+  </div>
+  <div class="features-grid">
+    <div class="feature-card">
+      <span class="feature-icon">⬡</span>
+      <h3 class="feature-title">جهان‌سازی عمیق</h3>
+      <p class="feature-text">از جغرافیای سیاره تا سیاست فراکسیون‌ها — هر جزئیات این دنیا با دقت طراحی شده است.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">◈</span>
+      <h3 class="feature-title">شخصیت‌های پیچیده</h3>
+      <p class="feature-text">هیچ‌کس کاملاً خوب یا بد نیست. هر انتخاب، هزینه دارد و هر شخصیت داستانی جدا می‌زید.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">◉</span>
+      <h3 class="feature-title">روایت غیرخطی</h3>
+      <p class="feature-text">داستان‌ها از زوایای مختلف روایت می‌شوند. هر بار که می‌خوانی، تکه‌ای تازه کشف می‌کنی.</p>
     </div>
   </div>
+</section>
 
-  <div class="section" id="neutral">
-    <h2>خنثی‌ها</h2>
-    <a href="#" class="open-btn" onclick="openPopup('خنثی‌ها', 'شخصیت‌هایی که نه به طور کامل قهرمان‌اند و نه ویلن؛ بلکه نقش کلیدی در داستان دارند.')">مشاهده اطلاعات</a>
-  </div>
+<footer>
+  <div class="footer-logo">ORUSIS</div>
+  <p class="footer-copy">© ۱۴۰۳ اوروسیس — تمام حقوق محفوظ است</p>
+  <ul class="footer-links">
+    <li><a href="story.html">داستان</a></li>
+    <li><a href="characters.html">شخصیت‌ها</a></li>
+    <li><a href="timeline.html">خط زمانی</a></li>
+  </ul>
+</footer>
 
-  <div class="section" id="story">
-    <h2>داستان‌ها</h2>
-    <a href="#" class="open-btn" onclick="openPopup('فصل‌های داستان', storyText)">مشاهده اطلاعات</a>
-  </div>
+<script>
+  // CURSOR
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mx=0,my=0,rx=0,ry=0;
+  document.addEventListener('mousemove',e=>{
+    mx=e.clientX; my=e.clientY;
+    cursor.style.left=mx+'px'; cursor.style.top=my+'px';
+  });
+  function animRing(){
+    rx+=(mx-rx)*0.12; ry+=(my-ry)*0.12;
+    ring.style.left=rx+'px'; ring.style.top=ry+'px';
+    requestAnimationFrame(animRing);
+  } animRing();
 
-  <div class="section" id="about">
-    <h2>درباره ما</h2>
-    <p>اینجا می‌توانید اطلاعاتی درباره تیم و هدف سایت را بنویسید.</p>
-  </div>
+  // NAV SCROLL
+  window.addEventListener('scroll',()=>{
+    document.getElementById('nav').classList.toggle('scrolled', window.scrollY>50);
+  });
 
-  <div class="section" id="contact">
-    <h2>تماس با ما</h2>
-    <p>شماره تلفن: 09134909607</p>
-  </div>
-
-  <div class="footer">
-    <p>&copy; 2025 سایت نویسندگی | تمام حقوق محفوظ است.</p>
-  </div>
-
-  <!-- پاپ‌آپ -->
-  <div class="popup-overlay" id="popup">
-    <div class="popup-box">
-      <span class="popup-close" onclick="closePopup()">×</span>
-      <h3 id="popup-title">عنوان پاپ‌آپ</h3>
-      <div id="popup-content">متن پاپ‌آپ در اینجا قرار می‌گیرد.</div>
-    </div>
-  </div>
-
-  <script>
-    function openPopup(title, content) {
-      document.getElementById('popup-title').innerText = title;
-      document.getElementById('popup-content').innerHTML = content.split('\n').join('<br>');
-      document.getElementById('popup').style.display = 'flex';
-    }
-
-    function closePopup() {
-      document.getElementById('popup').style.display = 'none';
-    }
-
-    document.addEventListener('keydown', function(event) {
-      if (event.key === "Escape") {
-        closePopup();
-      }
+  // STARS
+  const canvas = document.getElementById('stars');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  const stars = Array.from({length:200},()=>({
+    x:Math.random()*canvas.width,
+    y:Math.random()*canvas.height,
+    r:Math.random()*1.2+0.2,
+    a:Math.random(),
+    s:Math.random()*0.005+0.001
+  }));
+  function drawStars(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    stars.forEach(s=>{
+      s.a+=s.s; if(s.a>1||s.a<0) s.s*=-1;
+      ctx.beginPath();
+      ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+      ctx.fillStyle=`rgba(200,220,255,${s.a*0.8})`;
+      ctx.fill();
     });
+    requestAnimationFrame(drawStars);
+  } drawStars();
 
-    const storyText = `فصل ۱: آن شب تاریک ... (اینجا متن داستان قرار می‌گیرد)`;
-  </script>
-
+  window.addEventListener('resize',()=>{
+    canvas.width=window.innerWidth;
+    canvas.height=window.innerHeight;
+  });
+</script>
 </body>
 </html>
